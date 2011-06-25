@@ -17,6 +17,7 @@ import android.opengl.*;
 import android.os.Bundle;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 public class AstroRender extends Activity {
@@ -28,6 +29,28 @@ public class AstroRender extends Activity {
 
         asv = new AstroSurfaceView(this);
         this.setContentView(asv);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+    	int action = event.getAction();
+    	
+    	Log.v("key", ""+event.getKeyCode());
+    
+    	switch (event.getKeyCode()) {
+    	case KeyEvent.KEYCODE_VOLUME_UP:
+        	if (action != KeyEvent.ACTION_UP) 
+        		asv.renderer.zoomIn();
+    		asv.requestRender();
+    		return true;
+    	case KeyEvent.KEYCODE_VOLUME_DOWN:
+        	if (action != KeyEvent.ACTION_UP) 
+        		asv.renderer.zoomOut();
+    		asv.requestRender();
+    		return true;
+    	}
+    	
+    	return super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -88,7 +111,7 @@ class AstroRenderer implements GLSurfaceView.Renderer {
     private Context context;
     private int star;
     private float[] stars;
-    private final float MAXZOOM = 600000f;
+    private final float MAXZOOM = 512 * 1024;
     private final float TWEAK = 1.01f;
     private float ra = 0;
     private float dec = 80;
@@ -100,6 +123,20 @@ class AstroRenderer implements GLSurfaceView.Renderer {
     
     public float getZoom() {
     	return zoom;
+    }
+    
+    public void zoomIn() {
+    	zoom *= 2;
+    	if (zoom>MAXZOOM) {
+    		zoom = MAXZOOM;
+    	}
+    }
+    
+    public void zoomOut() {
+    	zoom /= 2;
+    	if (zoom<1) {
+    		zoom = 1;
+    	}
     }
     
     public void adjustRaDec(float deltaRa, float deltaDec) {
