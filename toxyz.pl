@@ -8,7 +8,7 @@ while(<>) {
         s/[\r\n]+//;
         @line = split(/\t/);
         $mag = $line[7];
-        if($mag>6) {
+        if($mag>8) {
             next;
         }
         $ra = dms($line[1],$line[2],$line[3])/12*pi;

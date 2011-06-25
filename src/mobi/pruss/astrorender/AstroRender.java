@@ -17,44 +17,99 @@ import android.opengl.*;
 import android.os.Bundle;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.MotionEvent;
 
 public class AstroRender extends Activity {
-	private GLSurfaceView gls;
+	private AstroSurfaceView asv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        gls = new GLSurfaceView(this);
-        gls.setRenderer(new AstroRenderer(this));
-        this.setContentView(gls);
+        asv = new AstroSurfaceView(this);
+        this.setContentView(asv);
     }
 
     @Override
     protected void onPause() {
     	super.onPause();
-    	gls.onPause();
+    	asv.onPause();
     }
 
     @Override
     protected void onResume() {
     	super.onResume();
-    	gls.onResume();
+    	asv.onResume();
     }
     
+}
+
+class AstroSurfaceView extends GLSurfaceView {
+	Context context;
+	AstroRenderer renderer;
+	private float oldX;
+	private float oldY;	
+	
+	AstroSurfaceView(Context c) {
+		super(c);
+		context = c;
+
+		renderer = new AstroRenderer(context);
+        setRenderer(renderer);
+        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+	}
+	
+    @Override public boolean onTouchEvent(MotionEvent e) {
+    	float x = e.getX();
+    	float y = e.getY();
+    	
+    	if (e.getAction()==MotionEvent.ACTION_MOVE) {
+    		float scale = 180f / 320 / renderer.getZoom();
+    		
+    		renderer.adjustRaDec(-(x-oldX)*scale, (y-oldY)*scale);
+    		requestRender();
+    	}
+    	
+    	oldX = x;
+    	oldY = y;
+    	
+    	return true;
+    }
+	
 }
 
 class AstroRenderer implements GLSurfaceView.Renderer {
     private FloatBuffer vertexBuffer;
     private FloatBuffer texVertexBuffer;
+    private float width;
+    private float height;
     private int COUNT = 0;
     private static float angle = 0;
     private Context context;
     private int star;
     private float[] stars;
-
+    private final float MAXZOOM = 600000f;
+    private final float TWEAK = 1.01f;
+    private float ra = 0;
+    private float dec = 80;
+    private float zoom = 2;
+    
     public AstroRenderer(Context c) {
     	context = c;
+    }
+    
+    public float getZoom() {
+    	return zoom;
+    }
+    
+    public void adjustRaDec(float deltaRa, float deltaDec) {
+    	ra += deltaRa;
+    	ra = ra % 360f;
+    	dec += deltaDec;
+    	if (dec>90)
+    		dec = 90;
+    	if (dec<-90)
+    		dec = -90;
     }
 
     private void cross(float[] out, float[] a, float[] b) {
@@ -139,18 +194,21 @@ class AstroRenderer implements GLSurfaceView.Renderer {
 		
     	gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     	gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-        if (angle < 0.001f && -0.001f <angle) {
-        	Log.v("angle", "t="+System.currentTimeMillis());
-        }
+//        if (angle < 0.001f && -0.001f <angle) {
+//        	Log.v("angle", "t="+System.currentTimeMillis());
+//        }
 
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
-        gl.glRotatef(-60, 1f, 0f, 0f);
-        gl.glRotatef(angle, 0f, 0f, 1f);
-        angle += .1;
+        gl.glScalef(zoom, zoom, zoom);
+        gl.glRotatef(90-dec, 1f, 0f, 0f);
+        gl.glRotatef(ra, 0f, 0f, 1f); 
+//        gl.glRotatef(-60, 1f, 0f, 0f);
+//        gl.glRotatef(angle, 0f, 0f, 1f);
+//        angle += .1;
 
-        if (360<=angle)
-        	angle = 0;
+//        if (360<=angle)
+//        	angle = 0;
 
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
         gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, texVertexBuffer);
@@ -163,7 +221,8 @@ class AstroRenderer implements GLSurfaceView.Renderer {
 
 	@Override
 	public void onSurfaceChanged(GL10 gl, int w, int h) {
-	      if (h == 0) w=1;   // To prevent divide by zero
+	      width = (float)w;
+	      height = (float)h;
 	   
 	      // Set the viewport (display area) to cover the entire window
 	      gl.glViewport(0, 0, w, h);
@@ -173,11 +232,13 @@ class AstroRenderer implements GLSurfaceView.Renderer {
 
 	      gl.glMatrixMode(GL10.GL_PROJECTION);
 	      gl.glLoadIdentity();                
-	      if (w<h) {
-				gl.glOrthof(1f, -1f, -(float)h/(float)w, (float)h/(float)w, -1.1f, 0f);
+	      if (width<height) {
+	    	    float aspect = height/width;
+				gl.glOrthof(-TWEAK, TWEAK, aspect*TWEAK, -aspect*TWEAK, 0f, -TWEAK*MAXZOOM);
 	      }
 	      else {
-				gl.glOrthof((float)w/(float)h, -(float)w/(float)h, -1f, 1f, -1.1f, 0f);
+	    	  	float aspect = width/height;
+				gl.glOrthof(-aspect*TWEAK, aspect*TWEAK, TWEAK, -TWEAK, 0f, -TWEAK*MAXZOOM);
 	      }
 	}
 
@@ -247,6 +308,9 @@ class AstroRenderer implements GLSurfaceView.Renderer {
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         Log.v("AR","onSurfaceCreated");
 
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        gl.glClearDepthf(MAXZOOM*TWEAK);
+
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         loadStars(R.raw.xyz);
@@ -273,8 +337,7 @@ class AstroRenderer implements GLSurfaceView.Renderer {
 					(float) (Math.pow(1.5849, -stars[4*i+3])*.11));
 		}
 
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        gl.glClearDepthf(1.0f);
+        gl.glDisable(GL10.GL_DEPTH_TEST);
         gl.glDisable(GL10.GL_CULL_FACE);
         gl.glEnable(GL10.GL_TEXTURE_2D);
         gl.glEnable(GL10.GL_BLEND);
