@@ -44,7 +44,7 @@ public class Time extends SkyCalculator {
 	
 	@Override
 	protected void update() {
-		/* Time updates always when setTime() is called */
+		/* The Time class updates always when setTime() is called */
 	}
 	
 	@Override
@@ -77,44 +77,46 @@ public class Time extends SkyCalculator {
 	
 	/** Return the difference between TAI and UTC (known as leap seconds).
 	    * Values from the USNO website: ftp://maia.usno.navy.mil/ser7/leapsec.dat
-	    * As of July 19, 2002, no leap second in Dec 2002 so next opportunity for
-	    * adding a leap second is July 2003. Check IERS Bulletin C.
-	    * also ok 2008
+	    * Updated by ARP: July 2011
 	    * @param mjd Modified Julian Date
 	    * @return number of leaps seconds.
 	    */
 
 	   private static int tai_utc(double mjd){
-	       if (mjd < 0.0) {
-	    	   Log.e("tai_utc", "MJD before the beginning of the leap sec table");
-	           return 0;
-	       }
-	       if ((mjd >=41317.0)&&(mjd < 41499.0)) return 10;
-	       if ((mjd >=41499.0)&&(mjd < 41683.0)) return 11;
-	       if ((mjd >=41683.0)&&(mjd < 42048.0)) return 12;
-	       if ((mjd >=42048.0)&&(mjd < 42413.0)) return 13;
-	       if ((mjd >=42413.0)&&(mjd < 42778.0)) return 14;
-	       if ((mjd >=42778.0)&&(mjd < 43144.0)) return 15;
-	       if ((mjd >=43144.0)&&(mjd < 43509.0)) return 16;
-	       if ((mjd >=43509.0)&&(mjd < 43874.0)) return 17;
-	       if ((mjd >=43874.0)&&(mjd < 44239.0)) return 18;
-	       if ((mjd >=44239.0)&&(mjd < 44786.0)) return 19;
-	       if ((mjd >=44786.0)&&(mjd < 45151.0)) return 20;
-	       if ((mjd >=45151.0)&&(mjd < 45516.0)) return 21;
-	       if ((mjd >=45516.0)&&(mjd < 46247.0)) return 22;
-	       if ((mjd >=46247.0)&&(mjd < 47161.0)) return 23;
-	       if ((mjd >=47161.0)&&(mjd < 47892.0)) return 24;
-	       if ((mjd >=47892.0)&&(mjd < 48257.0)) return 25;
-	       if ((mjd >=48257.0)&&(mjd < 48804.0)) return 26;
-	       if ((mjd >=48804.0)&&(mjd < 49169.0)) return 27;
-	       if ((mjd >=49169.0)&&(mjd < 49534.0)) return 28;
-	       if ((mjd >=49534.0)&&(mjd < 50083.0)) return 29;
-	       if ((mjd >=50083.0)&&(mjd < 50630.0)) return 30;
-	       if ((mjd >=50630.0)&&(mjd < 51179.0)) return 31;
-	       if ((mjd >=51179.0)&&(mjd < 53736.0)) return 32;
-	       if  (mjd >= 53736.0) return 33;
-
-    	   Log.e("tai_utc", "Input MJD out of bounds");
+	       /* most common case, so up front */
+	   if (mjd >= 54832.0) return 34;
+	   
+	   if ((mjd >=41317.0)&&(mjd < 41499.0)) return 10;
+	   if ((mjd >=41499.0)&&(mjd < 41683.0)) return 11;
+	   if ((mjd >=41683.0)&&(mjd < 42048.0)) return 12;
+	   if ((mjd >=42048.0)&&(mjd < 42413.0)) return 13;
+	   if ((mjd >=42413.0)&&(mjd < 42778.0)) return 14;
+	   if ((mjd >=42778.0)&&(mjd < 43144.0)) return 15;
+	   if ((mjd >=43144.0)&&(mjd < 43509.0)) return 16;
+	   if ((mjd >=43509.0)&&(mjd < 43874.0)) return 17;
+	   if ((mjd >=43874.0)&&(mjd < 44239.0)) return 18;
+	   if ((mjd >=44239.0)&&(mjd < 44786.0)) return 19;
+	   if ((mjd >=44786.0)&&(mjd < 45151.0)) return 20;
+	   if ((mjd >=45151.0)&&(mjd < 45516.0)) return 21;
+	   if ((mjd >=45516.0)&&(mjd < 46247.0)) return 22;
+	   if ((mjd >=46247.0)&&(mjd < 47161.0)) return 23;
+	   if ((mjd >=47161.0)&&(mjd < 47892.0)) return 24;
+	   if ((mjd >=47892.0)&&(mjd < 48257.0)) return 25;
+	   if ((mjd >=48257.0)&&(mjd < 48804.0)) return 26;
+	   if ((mjd >=48804.0)&&(mjd < 49169.0)) return 27;
+	   if ((mjd >=49169.0)&&(mjd < 49534.0)) return 28;
+	   if ((mjd >=49534.0)&&(mjd < 50083.0)) return 29;
+	   if ((mjd >=50083.0)&&(mjd < 50630.0)) return 30;
+	   if ((mjd >=50630.0)&&(mjd < 51179.0)) return 31;
+	   if ((mjd >=51179.0)&&(mjd < 53736.0)) return 32;
+	   if ((mjd >=53736.0)&&(mjd < 54832.0)) return 33;
+	
+	   if (mjd < 0.0) {
+		   Log.e("tai_utc", "MJD before the beginning of the leap sec table");
+	       return 0;
+	   }
+	
+	   Log.e("tai_utc", "Input MJD out of bounds");
 	       return 0;
 	   }
 
