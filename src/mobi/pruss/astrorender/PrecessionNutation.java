@@ -20,7 +20,10 @@ package mobi.pruss.astrorender;
 */
 
 public class PrecessionNutation extends SkyCalculator {
-	Matrix3x3 precNutMatrix;
+	private Matrix3x3 precNutMatrix;
+	private double eps;
+	private double dpsi;
+	private double omega;
 	
 	@Override
 	double getUpdateInterval() {
@@ -30,15 +33,25 @@ public class PrecessionNutation extends SkyCalculator {
 	Matrix3x3 getMatrix() {
 		return precNutMatrix;
 	}
+	
+	double eps() {
+		return eps;
+	}
+
+	double dpsi() {
+		return dpsi;
+	}
+	
+	double omega() {
+		return omega;
+	}
 
 	@Override
 	protected void update() {
 		super.update();
 		
-		double eps;
-		double dpsi;
 		double deps;
-		double t = (skyTime - AstroTime.MJD_J2000) / 36525.;
+		double t = (mjd_tt - Time.MJD_J2000) / 36525.;
 		double t2 = t*t;
 		double t3 = t2*t;
 		double t4 = t3*t;
@@ -176,14 +189,14 @@ public class PrecessionNutation extends SkyCalculator {
         lp = 357.52910918 + (129596581.0481*t - 0.5532*t2 + 0.000136*t3 - 0.00001149*t4)/3600.0;
         F  = 93.27209062 + (1739527262.8478*t - 12.7512*t2 - 0.001037*t3 + 0.00000417*t4)/3600.0;
         D  = 297.85019547 + (1602961601.2090*t - 6.3706*t2 + 0.006593*t3 - 0.00003169*t4)/3600.0;
-        double omega = 125.04455501 + (-6962890.2665*t + 7.4722*t2 + 0.007702*t3 - 0.00005939*t4)/3600.0;
+        omega = 125.04455501 + (-6962890.2665*t + 7.4722*t2 + 0.007702*t3 - 0.00005939*t4)/3600.0;
  
         // Quadrant checks and convert to radians
-        l = l*DEG2RAD;
-        lp = lp*DEG2RAD;
-        F = F*DEG2RAD;
-        D = D*DEG2RAD;
-        omega = omega*DEG2RAD;
+        l = fixRadians(l*DEG2RAD);
+        lp = fixRadians(lp*DEG2RAD);
+        F = fixRadians(F*DEG2RAD);
+        D = fixRadians(D*DEG2RAD);
+        omega = fixRadians(omega*DEG2RAD);
         deps  = 0.;
         dpsi  = 0.;
  
@@ -205,9 +218,9 @@ public class PrecessionNutation extends SkyCalculator {
         Matrix3x3 n3 = new Matrix3x3(1, eps+deps);
         
         // precess
-    	double zeta = ARCSEC2RAD*(2306.2181*t + 0.30188*t2 + 0.017998*t3);
-    	double theta = ARCSEC2RAD*(2004.3109*t - 0.42665*t2 - 0.041833*t3);
-    	double z = ARCSEC2RAD*(2306.2181*t + 1.09468*t2 + 0.018203*t3);
+    	double zeta = fixRadians(ARCSEC2RAD*(2306.2181*t + 0.30188*t2 + 0.017998*t3));
+    	double theta = fixRadians(ARCSEC2RAD*(2004.3109*t - 0.42665*t2 - 0.041833*t3));
+    	double z = fixRadians(ARCSEC2RAD*(2306.2181*t + 1.09468*t2 + 0.018203*t3));
  
         Matrix3x3 p1 = new Matrix3x3(3, zeta);
         Matrix3x3 p2 = new Matrix3x3(2, -theta);

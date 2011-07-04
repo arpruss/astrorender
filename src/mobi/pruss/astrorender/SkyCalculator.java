@@ -17,29 +17,44 @@
 package mobi.pruss.astrorender;
 
 public class SkyCalculator {
-	double skyTime;
+	double mjd_tt;
+	double mjd_ut1;
+	double mjd_utc;
 	static final double DEG2RAD = Math.PI/180.;
 	static final double RAD2DEG = 180./Math.PI;
 	static final double ARCSEC2RAD = Math.PI/(180.*60.*60.);
 	
 	SkyCalculator() {
-		skyTime =  AstroTime.INVALID_TIME;
+		mjd_tt =  Time.INVALID_TIME;
+		mjd_ut1 = Time.INVALID_TIME;
+		mjd_utc = Time.INVALID_TIME;
 	}
 	
 	double getUpdateInterval() {
 		return 1/86400.;
 	}
 	
-	void setSkyTime(double mjd) {
+	void setTime(double tt, double ut1, double utc) {
 		boolean needUpdate;
-		needUpdate = ! AstroTime.isValid(skyTime) || 
-			Math.abs(skyTime - mjd) >= getUpdateInterval(); 
-		skyTime = mjd;
+		needUpdate = ! Time.isValid(mjd_tt) || 
+			Math.abs(mjd_tt - tt) >= getUpdateInterval(); 
 		if (needUpdate) {
+			mjd_tt = tt;
+			mjd_ut1 = ut1;
+			mjd_utc = utc;
 			update();
 		}
 	}
 
 	protected void update() {
 	}
+
+
+	static double fixRadians(double theta) {
+		theta = theta % (2 * Math.PI);
+		if (theta < 0)
+			theta += 2 * Math.PI;
+		return theta;
+	}
+
 }
