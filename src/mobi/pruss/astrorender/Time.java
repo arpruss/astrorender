@@ -20,9 +20,6 @@
 
 package mobi.pruss.astrorender;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.util.Log;
 
 /* The official time system for AstroObserver is MJD rather than JD
@@ -36,14 +33,21 @@ public class Time extends SkyCalculator {
 	static final double TT_TAI = 32.184;  // constant
 	SkyCalculator[] calculators;
 
+	/* 
+	 * Construct with a list of all the SkyCalculators to be updated
+	 * when setTime() or setTimeUTC() is called.  
+	 */
 	Time(SkyCalculator... c) {
+		super();
 		calculators = c;
 	}
 	
 	@Override
-	void update() {		
+	protected void update() {
+		/* Time updates always when setTime() is called */
 	}
 	
+	@Override
 	void setTime(double tt, double ut1, double utc) {
 		mjd_tt = tt;
 		mjd_ut1 = ut1;

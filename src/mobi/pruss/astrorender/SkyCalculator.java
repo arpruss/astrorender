@@ -16,6 +16,13 @@
 
 package mobi.pruss.astrorender;
 
+/* 
+ * Subclasses of SkyCalculator do various time-dependent calculations, such
+ * as movements of planets or precession/nutation.  The subclasses do not have 
+ * to recalculate at every tick.  Overriding getUpdateInterval() will adjust
+ * how often updates are done, or one can override the whole setTime() method. 
+ */
+
 public class SkyCalculator {
 	double mjd_tt;
 	double mjd_ut1;
@@ -37,7 +44,8 @@ public class SkyCalculator {
 	void setTime(double tt, double ut1, double utc) {
 		boolean needUpdate;
 		needUpdate = ! Time.isValid(mjd_tt) || 
-			Math.abs(mjd_tt - tt) >= getUpdateInterval(); 
+			Math.abs(mjd_tt - tt) >= getUpdateInterval();
+			
 		if (needUpdate) {
 			mjd_tt = tt;
 			mjd_ut1 = ut1;
@@ -49,12 +57,10 @@ public class SkyCalculator {
 	protected void update() {
 	}
 
-
 	static double fixRadians(double theta) {
 		theta = theta % (2 * Math.PI);
 		if (theta < 0)
 			theta += 2 * Math.PI;
 		return theta;
 	}
-
 }
