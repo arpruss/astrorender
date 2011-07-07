@@ -31,6 +31,38 @@ public class SkyCalculator {
 	static final double RAD2DEG = 180./Math.PI;
 	static final double ARCSEC2RAD = Math.PI/(180.*60.*60.);
 	
+	/* Major solar system objects */
+	public static final int SS_SUN = 0;
+	public static final int SS_MERCURY = 1;
+	public static final int SS_VENUS = 2;
+	public static final int SS_EARTH = 3;
+	public static final int SS_MARS = 4;
+	public static final int SS_JUPITER = 5;
+	public static final int SS_SATURN = 6;
+	public static final int SS_URANUS = 7;
+	public static final int SS_NEPTUNE = 8;
+	public static final int SS_PLUTO = 9;
+	public static final int SS_MOON = 10;
+	
+	static final double PRECISION_ARCSEC = 0.25;
+	
+	public static final double[] ssApproxMinimumSecPerArcsec = {
+		/* these are kind of approximate */
+		/* update intervals for main SS objects will be these values times
+		 * PRECISION_ARCSEC */
+		24.35,
+		12.95,
+		19.27,
+		0,
+		32.01,
+		100.71,
+		184.86,
+		384.43,
+		646.61,
+		644.83,
+		27.32*86400/(360*60*60) /* Moon: 1.82 */
+	};
+	
 	SkyCalculator() {
 		mjd_tt =  Time.INVALID_TIME;
 		mjd_ut1 = Time.INVALID_TIME;
