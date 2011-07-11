@@ -20,8 +20,6 @@
 package mobi.pruss.astrorender;
 
 public class NonEarthPlanet extends Planet {
-	public double[] equatorialXYZ;
-	public double distance;
 	private Planet earth;
 	public final int PRIORITY = Earth.PRIORITY+1;
 	
@@ -36,7 +34,6 @@ public class NonEarthPlanet extends Planet {
 	
 	protected void update() {
 		super.update();
-		earth.update(); /* TODO: may be removed if safe calculation order is used */
 		double x = heliocentricXYZ[0] - earth.heliocentricXYZ[0]; 	
 		double y = heliocentricXYZ[1] - earth.heliocentricXYZ[1]; 	
 		double z = heliocentricXYZ[2] - earth.heliocentricXYZ[2];

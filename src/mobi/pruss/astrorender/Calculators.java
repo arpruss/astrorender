@@ -2,6 +2,7 @@ package mobi.pruss.astrorender;
 
 public class Calculators extends SkyCalculator {
 	public Earth earth;
+	public NonEarthPlanet[] nonEarthPlanets; 
 	public NonEarthPlanet mercury;
 	public NonEarthPlanet venus;
 	public NonEarthPlanet mars;
@@ -107,6 +108,13 @@ public class Calculators extends SkyCalculator {
 		pluto = new NonEarthPlanet(earth, 
 				SkyCalculator.ssApproxMinimumSecPerArcsec[SkyCalculator.SS_PLUTO] 
 				    * SkyCalculator.PRECISION_ARCSEC, plutoElements);
+
+		nonEarthPlanets = new NonEarthPlanet[] {
+				null, mercury, venus, null, mars, jupiter, saturn,
+				uranus, neptune, pluto, null, null
+		};
+		
+		
 		precNut = new PrecessionNutation();
 		siderealTime = new SiderealTime(precNut);
 		timeDriver = new Time(
@@ -117,4 +125,15 @@ public class Calculators extends SkyCalculator {
 	public void setTimeUTC(double t) {
 		timeDriver.setTimeUTC(t);
 	}
+	
+	public static float[] toFloatVector(double[] v) {
+		float[] xyz = {
+		(float)v[0],
+		(float)v[1],
+		(float)v[2],
+		0f };
+		
+		return xyz;
+	}
+	
 }

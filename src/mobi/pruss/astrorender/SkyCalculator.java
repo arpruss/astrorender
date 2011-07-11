@@ -103,5 +103,11 @@ public class SkyCalculator {
 		return theta;
 	}
 
-
+	static double[] negateXYZ(double[] v) {
+		double[] nv = {
+			-v[0], -v[1], -v[2]	
+		};
+		
+		return nv;
+	}
 }

@@ -20,6 +20,10 @@
 package mobi.pruss.astrorender;
 
 public class SolarSystemBody extends SkyCalculator {
+	public double[] equatorialXYZ;
+	public double distance;
+	public double brightness;
+	public double[] heliocentricXYZ;
 	double sinM;
 	double cosM;
 	double tt_cent;

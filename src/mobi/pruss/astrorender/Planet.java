@@ -20,7 +20,6 @@
 package mobi.pruss.astrorender;
 
 public class Planet extends SolarSystemBody {
-	public double[] heliocentricXYZ;
 	double[] elements;
 	
 	static final int AA=0;

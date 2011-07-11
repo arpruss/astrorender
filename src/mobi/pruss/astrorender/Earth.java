@@ -5,6 +5,9 @@ public class Earth extends Planet {
 
 	public Earth(double u, double[] e) {
 		super(u, e);
+		
+		distance = 0;
+		brightness = Double.NaN;
 	}
 
 	@Override

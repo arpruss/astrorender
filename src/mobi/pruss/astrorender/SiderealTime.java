@@ -43,9 +43,6 @@ public class SiderealTime extends SkyCalculator {
 	
 	@Override
 	protected void update() {
-		/* this is only needed in case precNut was updated too late */
-		precNut.setTime(mjd_tt, mjd_ut1, mjd_utc); 
-		
     	eps = precNut.eps();
     	dpsi = precNut.dpsi();
     	omega = precNut.omega();
