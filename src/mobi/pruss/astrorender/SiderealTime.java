@@ -27,6 +27,13 @@ public class SiderealTime extends SkyCalculator {
 	public double gmst;
 	public double gst;
 	private static final double JAN11997 = Time.jdToMJD(2450449.5);
+	public static final int PRIORITY = PrecessionNutation.PRIORITY+1;
+	public static final double UPDATE = 0.5/86400.;
+	
+	@Override
+	public int getPriority() {
+		return PRIORITY;
+	}
 	
 	SiderealTime(PrecessionNutation pn) {
 		super();
@@ -47,7 +54,7 @@ public class SiderealTime extends SkyCalculator {
 	}
 	
 	public double getUpdateInterval() {
-		return 1/86400.; /* once per second */
+		return UPDATE; /* once per second */
 	}
 	
 	void updateGMST(){

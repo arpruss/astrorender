@@ -23,6 +23,11 @@ public class NonEarthPlanet extends Planet {
 	public double[] equatorialXYZ;
 	public double distance;
 	private Planet earth;
+	public final int PRIORITY = Earth.PRIORITY+1;
+	
+	public int getPriority() {
+		return PRIORITY;
+	}
 	
 	public NonEarthPlanet(Planet e, double updateInterval, double[] el) {
 		super(updateInterval, el);

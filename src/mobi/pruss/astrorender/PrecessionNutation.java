@@ -24,6 +24,12 @@ public class PrecessionNutation extends SkyCalculator {
 	private double eps;
 	private double dpsi;
 	private double omega;
+	public static final int PRIORITY = -50;
+	
+	@Override
+	public int getPriority() {
+		return PRIORITY;
+	}
 	
 	@Override
 	double getUpdateInterval() {
@@ -225,7 +231,8 @@ public class PrecessionNutation extends SkyCalculator {
         Matrix3x3 p1 = new Matrix3x3(3, zeta);
         Matrix3x3 p2 = new Matrix3x3(2, -theta);
         Matrix3x3 p3 = new Matrix3x3(3, z);
-        
+
+        precNutMatrix = new Matrix3x3();
         p1.times(p2.times(p3.times(n1.times(n2.times(n3))))).copyTo(precNutMatrix);		
 	}
 	

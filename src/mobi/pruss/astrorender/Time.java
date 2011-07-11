@@ -20,6 +20,9 @@
 
 package mobi.pruss.astrorender;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import android.util.Log;
 
 /* The official time system for AstroObserver is MJD rather than JD
@@ -28,23 +31,34 @@ import android.util.Log;
 
 public class Time extends SkyCalculator {
 	static final double MJD0 = 2400000.5;
+	static final double MJD_1970 = 40587;
 	static final double MJD_J2000 = 51544.5;
 	static final double INVALID_TIME = Double.NaN;
 	static final double TT_TAI = 32.184;  // constant
+	static final int PRIORITY = -100;
 	SkyCalculator[] calculators;
 
 	/* 
-	 * Construct with a list of all the SkyCalculators to be updated
+	 * Construct a list of all the SkyCalculators to be updated
 	 * when setTime() or setTimeUTC() is called.  
 	 */
 	Time(SkyCalculator... c) {
-		super();
+		super();	
+		
+		Arrays.sort(c, new Comparator<SkyCalculator>() {
+			@Override
+			public int compare(SkyCalculator a, SkyCalculator b) {
+				return a.getPriority() - b.getPriority();
+			} });
 		calculators = c;
 	}
 	
 	@Override
 	protected void update() {
-		/* The Time class updates always when setTime() is called */
+		Log.v("AstroRender", "update");
+		for (SkyCalculator c:calculators) {
+			c.update();
+		}
 	}
 	
 	@Override
@@ -56,10 +70,14 @@ public class Time extends SkyCalculator {
 		for (SkyCalculator c:calculators) {
 			c.setTime(tt, ut1, utc);
 		}
-}
+	}
+	
+	/* TODO: handle different time rates for temporal slewing */
+	public static double systemTimeToUTC(long millis) {
+		return millis / 86400000. + MJD_1970; 
+	}
 
 	void setTimeUTC(double utc) {
-		/* TODO: improve utc-u1 conversion */
 		setTime(utcToTT(utc), utc, utc);
 	}
 

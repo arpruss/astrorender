@@ -46,6 +46,9 @@ public class SkyCalculator {
 	
 	static final double PRECISION_ARCSEC = 0.25;
 	
+	public static final int PRIORITY = 0;
+	public static final double UPDATE = 1/86400.;
+	
 	public static final double[] ssApproxMinimumSecPerArcsec = {
 		/* these are kind of approximate */
 		/* update intervals for main SS objects will be these values times
@@ -53,7 +56,7 @@ public class SkyCalculator {
 		24.35,
 		12.95,
 		19.27,
-		0,
+		24.35, /* same as sun for now */
 		32.01,
 		100.71,
 		184.86,
@@ -69,8 +72,12 @@ public class SkyCalculator {
 		mjd_utc = Time.INVALID_TIME;
 	}
 	
+	public int getPriority() {
+		return PRIORITY;
+	}
+	
 	double getUpdateInterval() {
-		return 1/86400.;
+		return UPDATE;
 	}
 	
 	void setTime(double tt, double ut1, double utc) {
@@ -95,4 +102,6 @@ public class SkyCalculator {
 			theta += 2 * Math.PI;
 		return theta;
 	}
+
+
 }
